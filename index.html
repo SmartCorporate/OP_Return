@@ -128,36 +128,6 @@
       overflow-y: auto;
     }
 
-    /* Copy Button inside HEX box */
-    .copy-btn {
-      position: absolute;
-      right: 20px;
-      top: 0px;
-      background: none;
-      border: none;
-      color: #ffb84d;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-
-    .copy-btn:hover {
-      color: #ffffff;
-    }
-
-    .copy-msg {
-      font-size: 0.8rem;
-      color: #00ff99;
-      text-shadow: 0 0 6px #00ff9966;
-      margin-top: 6px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .copy-msg.visible {
-      opacity: 1;
-    }
-
   </style>
 </head>
 <body>
@@ -173,9 +143,7 @@
 
     <div class="hex-container">
       <p class="hex-label">✴ HEX Preview:</p>
-      <button class="copy-btn" id="copyHex">📋 Copy</button>
       <div class="hex-box" id="hexOutput">...</div>
-      <div class="copy-msg" id="copyMsg">Copied to clipboard ✓</div>
     </div>
   </div>
 
@@ -183,42 +151,26 @@
     const input = document.getElementById("messageInput");
     const count = document.getElementById("charCount");
     const hexBox = document.getElementById("hexOutput");
-    const copyBtn = document.getElementById("copyHex");
-    const copyMsg = document.getElementById("copyMsg");
 
     input.addEventListener("input", () => {
-      const text = input.value; // 🔸 conta anche spazi
-      const len = [...text].length; // supporta Unicode
+      const text = input.value; // Conta anche spazi
+      const len = [...text].length;
       count.textContent = `${len}/37`;
 
-      // Convert text to HEX
+      // Conversione testo → HEX
       let hex = "";
       for (let i = 0; i < text.length; i++) {
         hex += text.charCodeAt(i).toString(16);
       }
       hexBox.textContent = hex || "...";
 
-      // Background logic
+      // Colori dinamici
       if (len <= 37) {
         input.style.background = "linear-gradient(180deg, #004400 0%, #007700 100%)";
         input.style.boxShadow = "0 0 10px #00ff0033";
       } else {
         input.style.background = "linear-gradient(180deg, #440000 0%, #770000 100%)";
         input.style.boxShadow = "0 0 20px #ff000066";
-      }
-    });
-
-    // 📋 Copy HEX to clipboard
-    copyBtn.addEventListener("click", async () => {
-      const text = hexBox.textContent.trim();
-      if (text && text !== "...") {
-        try {
-          await navigator.clipboard.writeText(text);
-          copyMsg.classList.add("visible");
-          setTimeout(() => copyMsg.classList.remove("visible"), 1500);
-        } catch (err) {
-          alert("Copy failed: " + err);
-        }
       }
     });
   </script>
