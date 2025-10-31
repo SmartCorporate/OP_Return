@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitcoin OP_RETURN Writer</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Bitcoin OP_RETURN Writer</h1>
+    <p class="subtitle">Store your message forever on the Bitcoin blockchain</p>
+
+    <textarea id="messageInput" maxlength="37" placeholder="Enter up to 37 characters..."></textarea>
+    <div class="counter"><span id="charCount">0</span>/37</div>
+
+    <div class="button-group">
+      <button class="btn test" onclick="testMessage()">TEST MESSAGE</button>
+      <button class="btn write" onclick="writeNow()">WRITE NOW</button>
+      <button class="btn future" onclick="writeFuture()">WRITE IN THE FUTURE</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
