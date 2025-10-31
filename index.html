@@ -4,262 +4,290 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bitcoin OP_RETURN Writer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: "Orbitron", sans-serif;
-      background-color: #000;
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at center, #000000 60%, #0a0a0a 100%);
       color: #ffb84d;
+      font-family: 'Orbitron', sans-serif;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
       overflow: hidden;
     }
 
-    h1 {
+    /* Contenitore principale */
+    .container {
+      border: 2px solid #ffb84d;
+      border-radius: 15px;
+      padding: 40px;
       text-align: center;
-      font-size: 2.3em;
-      text-shadow: 0 0 20px #ff9900;
-      margin-top: 20px;
+      width: 420px;
+      box-shadow: 0 0 25px #ffb84d55;
+      background: rgba(0, 0, 0, 0.8);
+      position: relative;
     }
 
-    h2 {
-      font-weight: 400;
-      text-align: center;
-      font-size: 1.1em;
-      color: #aaa;
+    /* Pulsante How It Works */
+    .info-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 0.7rem;
+      border: 1px solid #ffb84d;
+      background: rgba(0, 0, 0, 0.5);
+      color: #ffb84d;
+      padding: 4px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .info-btn:hover {
+      background: #ffb84d;
+      color: #000;
+    }
+
+    h1 {
+      color: #ffb84d;
+      text-shadow: 0 0 10px #ffb84d;
+      margin-bottom: 10px;
+    }
+
+    p.subtitle {
+      color: #b3b3b3;
+      font-size: 0.9rem;
       margin-bottom: 25px;
     }
 
-    .container {
-      position: relative;
-      width: 90%;
-      max-width: 600px;
-      border: 2px solid #ff9900;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 0 30px rgba(255, 153, 0, 0.3);
-      text-align: center;
-      background: radial-gradient(circle at top, #111 0%, #000 100%);
-    }
-
     textarea {
-      width: 100%;
-      height: 80px;
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid #ff9900;
+      width: 85%;
+      height: 55px;
+      border: 1px solid #ffb84d;
       border-radius: 10px;
-      color: #ffb84d;
-      font-size: 1.2em;
+      background: linear-gradient(180deg, #002200 0%, #003300 100%);
+      color: #ffffff;
       padding: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      text-align: center;
       outline: none;
       resize: none;
-      transition: background 0.5s, border 0.5s;
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
     }
 
-    .char-counter {
-      margin-top: 8px;
-      font-size: 0.9em;
+    textarea:focus {
+      transform: scale(1.01);
+      box-shadow: 0 0 12px #00ff0066;
+    }
+
+    .char-count {
       color: #ffb84d;
+      margin-top: 6px;
+      font-size: 0.85rem;
+      font-family: 'Orbitron', sans-serif;
     }
 
     button {
-      width: 100%;
-      margin: 12px 0;
-      padding: 14px;
-      background: transparent;
-      border: 2px solid #ff9900;
-      border-radius: 10px;
+      display: block;
+      width: 90%;
+      margin: 10px auto;
+      padding: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
       color: #ffb84d;
-      font-size: 1em;
-      text-transform: uppercase;
+      background: transparent;
+      border: 2px solid #ffb84d;
+      border-radius: 10px;
+      text-shadow: 0 0 8px #ffb84d;
       cursor: pointer;
-      transition: all 0.3s;
-      font-weight: bold;
+      transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
     }
 
-    button:hover {
-      background-color: #ff9900;
+    button:hover:enabled {
+      background: #ffb84d;
       color: #000;
-      box-shadow: 0 0 20px #ff9900;
+      box-shadow: 0 0 15px #ffb84d;
+    }
+
+    button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
     }
 
     .hex-container {
-      margin-top: 15px;
-      border: 2px solid #ff9900;
-      border-radius: 10px;
-      padding: 12px;
-      word-wrap: break-word;
-      background-color: rgba(30, 20, 0, 0.3);
-      font-size: 0.9em;
-      color: #ffcc80;
-    }
-
-    /* 🔶 How it Works button */
-    .help-btn {
-      position: absolute;
-      top: 20px;
-      right: 25px;
-      background: transparent;
+      width: 90%;
+      margin: 25px auto 0 auto;
+      text-align: center;
       color: #ffb84d;
-      border: 1px solid #ff9900;
-      border-radius: 20px;
-      padding: 6px 15px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 0.9em;
+      font-family: 'Orbitron', sans-serif;
+      overflow-wrap: break-word;
+      word-break: break-all;
+      position: relative;
     }
 
-    .help-btn:hover {
-      background-color: #ff9900;
-      color: #000;
-      box-shadow: 0 0 15px #ff9900;
+    .hex-label {
+      color: #ffb84d;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      text-shadow: 0 0 6px #ffb84d;
     }
 
-    /* 🔶 Popup */
-    .popup {
+    .hex-box {
+      display: inline-block;
+      width: auto;
+      min-width: 60%;
+      max-width: 95%;
+      background: rgba(255, 184, 77, 0.08);
+      border: 1px solid #ffb84d;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 0.9rem;
+      color: #ffb84d;
+      overflow-wrap: break-word;
+      word-break: break-all;
+      text-align: left;
+      box-shadow: 0 0 10px #ffb84d44;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    /* Popup */
+    .modal {
       display: none;
       position: fixed;
-      top: 0;
+      z-index: 10;
       left: 0;
+      top: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      backdrop-filter: blur(5px);
+      background-color: rgba(0, 0, 0, 0.8);
       justify-content: center;
       align-items: center;
-      z-index: 1000;
     }
-
-    .popup-content {
-      background: radial-gradient(circle at top, #111, #000);
-      border: 2px solid #ff9900;
-      box-shadow: 0 0 40px rgba(255, 153, 0, 0.4);
+    .modal-content {
+      background: #0a0a0a;
+      border: 2px solid #ffb84d;
       border-radius: 12px;
-      padding: 25px 35px;
-      width: 80%;
-      max-width: 800px;
-      color: #ffcc80;
-      overflow-y: auto;
-      max-height: 80%;
-    }
-
-    .popup-content h3 {
+      padding: 20px 30px;
+      width: 400px;
       color: #ffb84d;
-      text-align: center;
-      text-shadow: 0 0 12px #ff9900;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 0 20px #ffb84d55;
     }
-
-    .close-popup {
-      background: transparent;
-      color: #ff9900;
-      border: 1px solid #ff9900;
-      border-radius: 10px;
-      padding: 8px 15px;
-      cursor: pointer;
+    .close-btn {
       float: right;
-      transition: all 0.3s;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #ffb84d;
+    }
+    .close-btn:hover {
+      color: #fff;
     }
 
-    .close-popup:hover {
-      background-color: #ff9900;
-      color: #000;
+    .redirect-msg {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #00ff99;
+      display: none;
     }
-
   </style>
 </head>
 <body>
-
   <div class="container">
-    <button class="help-btn" onclick="openPopup()">How it Works</button>
+    <button class="info-btn" id="infoBtn">How It Works</button>
     <h1>Bitcoin OP_RETURN Writer</h1>
-    <h2>Store your message forever on the Bitcoin blockchain</h2>
+    <p class="subtitle">Store your message forever on the Bitcoin blockchain</p>
 
-    <textarea id="messageInput" maxlength="37" placeholder="Enter up to 37 characters..."></textarea>
-    <div class="char-counter" id="charCounter">0/37</div>
+    <textarea id="messageInput" maxlength="100" placeholder="Enter up to 37 characters..."></textarea>
+    <p class="char-count" id="charCount">0/37</p>
 
-    <button onclick="window.open('https://buy.stripe.com/28EcN6ff70lK3lI8jQcwg00','_blank')">
-      WRITE TODAY
-    </button>
+    <button id="writeToday" disabled>WRITE TODAY</button>
+    <button id="writeFuture" disabled>WRITE IN THE FUTURE</button>
 
-    <button onclick="window.open('https://buy.stripe.com/9B65kEc2V3xWcWi0Rocwg01','_blank')">
-      WRITE IN THE FUTURE
-    </button>
+    <p class="redirect-msg" id="redirectMsg">🔁 Redirecting to secure Stripe checkout...</p>
 
-    <div class="hex-container" id="hexOutput"></div>
+    <div class="hex-container">
+      <p class="hex-label">✴ HEX Preview:</p>
+      <div class="hex-box" id="hexOutput">...</div>
+    </div>
   </div>
 
-  <!-- POPUP -->
-  <div class="popup" id="popup">
-    <div class="popup-content">
-      <button class="close-popup" onclick="closePopup()">Close ✖</button>
-      <h3>⚙️ How Bitcoin OP_RETURN Writing Works</h3>
+  <!-- Modal -->
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeModal">&times;</span>
+      <h3>🟠 WRITE TODAY</h3>
       <p>
-        This service allows you to <b>engrave a personal message permanently on the Bitcoin blockchain</b> 
-        using the OP_RETURN function — a small, reserved space in a Bitcoin transaction that can store up to 
-        <b>37 characters of text forever</b>.
+        When you select this option, your message will be written on the blockchain within the same day of your request.
+        Our team will receive an automated email containing your message and transaction details.
+        Once the inscription is completed, you’ll receive a confirmation email containing the Transaction ID and a direct blockchain.com link where your message can be verified publicly — permanently recorded forever.
       </p>
-
-      <h4>🟠 WRITE TODAY</h4>
+      <hr style="border: 1px solid #ffb84d33; margin: 10px 0;">
+      <h3>🟢 WRITE IN THE FUTURE</h3>
       <p>
-        When you select this option, your message will be written 
-        <b>on the blockchain within the same day of your request</b>.<br>
-        Our team receives an automated email containing your message and transaction details as soon as the payment is confirmed.<br>
-        Once the inscription is completed, you’ll receive a <b>confirmation email</b> containing the 
-        <b>Transaction ID</b> and a <b>direct blockchain.com link</b> where your message can be publicly verified — permanently recorded forever.
+        This option lets you schedule your inscription for a future date. After payment, you will be contacted by our team to confirm your desired date.
+        On that day, we’ll write your message on the Bitcoin blockchain and send you a confirmation email containing the Transaction ID and blockchain.com link showing your message’s permanent record.
       </p>
-
-      <h4>🔵 WRITE IN THE FUTURE</h4>
-      <p>
-        This option allows you to <b>schedule your message for a specific future date</b>.<br>
-        After payment, you will write your <b>chosen future date inside the email message body</b>, together with your text.<br>
-        Our team will then inscribe your message on the Bitcoin blockchain exactly on that chosen date and send you a 
-        <b>confirmation email</b> containing the <b>Transaction ID</b> and <b>blockchain.com link</b> showing your message’s permanent record.
-      </p>
-
-      <h4>🧠 Important Notes</h4>
-      <ul>
-        <li>Each message can contain up to <b>37 characters</b>, including spaces and punctuation.</li>
-        <li>All inscriptions are <b>public, permanent, and cannot be altered once written</b>.</li>
-        <li>Please double-check your text before confirming payment.</li>
-      </ul>
     </div>
   </div>
 
   <script>
     const input = document.getElementById("messageInput");
-    const counter = document.getElementById("charCounter");
-    const hexOutput = document.getElementById("hexOutput");
+    const count = document.getElementById("charCount");
+    const hexBox = document.getElementById("hexOutput");
+    const writeToday = document.getElementById("writeToday");
+    const writeFuture = document.getElementById("writeFuture");
+    const redirectMsg = document.getElementById("redirectMsg");
+
+    const infoBtn = document.getElementById("infoBtn");
+    const modal = document.getElementById("infoModal");
+    const closeModal = document.getElementById("closeModal");
+
+    infoBtn.onclick = () => modal.style.display = "flex";
+    closeModal.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
 
     input.addEventListener("input", () => {
       const text = input.value;
-      const length = text.length;
-      counter.textContent = `${length}/37`;
+      const len = [...text].length;
+      count.textContent = `${len}/37`;
 
-      if (length <= 37) {
-        input.style.background = "linear-gradient(180deg, #0a3, #042)";
-        input.style.borderColor = "#0f0";
-      } else {
-        input.style.background = "linear-gradient(180deg, #400, #800)";
-        input.style.borderColor = "#f00";
+      // Conversione testo → HEX
+      let hex = "";
+      for (let i = 0; i < text.length; i++) {
+        hex += text.charCodeAt(i).toString(16);
       }
+      hexBox.textContent = hex || "...";
 
-      // Convert to HEX dynamically
-      const hex = Array.from(text)
-        .map(c => c.charCodeAt(0).toString(16).padStart(2, "0"))
-        .join("");
-      hexOutput.textContent = hex || "";
+      // Cambia colore e abilita/disabilita pulsanti
+      if (len <= 37 && len > 0) {
+        input.style.background = "linear-gradient(180deg, #004400 0%, #007700 100%)";
+        writeToday.disabled = false;
+        writeFuture.disabled = false;
+      } else {
+        input.style.background = "linear-gradient(180deg, #440000 0%, #770000 100%)";
+        writeToday.disabled = true;
+        writeFuture.disabled = true;
+      }
     });
 
-    function openPopup() {
-      document.getElementById("popup").style.display = "flex";
-    }
+    // Redirect URLs — puoi aggiornare qui in futuro
+    const linkToday = "https://buy.stripe.com/aFa14o0kdgkI6xUfMicwg02";
+    const linkFuture = "https://buy.stripe.com/8x2aEYgjb2tScWifMicwg03";
 
-    function closePopup() {
-      document.getElementById("popup").style.display = "none";
-    }
+    writeToday.addEventListener("click", () => {
+      redirectMsg.style.display = "block";
+      setTimeout(() => window.open(linkToday, "_blank"), 800);
+    });
+
+    writeFuture.addEventListener("click", () => {
+      redirectMsg.style.display = "block";
+      setTimeout(() => window.open(linkFuture, "_blank"), 800);
+    });
   </script>
 </body>
 </html>
